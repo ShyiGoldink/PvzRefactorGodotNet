@@ -279,3 +279,14 @@ New-Item -ItemType Directory -Force -Path 'D:\pvz\build' | Out-Null
 - 导出的 release 模板**禁用了命令行场景覆盖**，不能 `pvz.exe <场景路径>`，只能进主场景。
 - 换过主场景、或者改了 C# 代码，都要重新导一次。
 - 导出用的是自己编译引擎的模板，在 `%APPDATA%\Liya\export_templates\4.7.1.stable\`。
+
+### 无头模式测不了鼠标输入
+
+`--headless` 用的假 DisplayServer 会把鼠标坐标放大（往 (74,80) 塞点击，收到的
+是 (2220,2400)），所以**验证"点卡片 → 点草地"这类输入必须开真实窗口**：
+
+```powershell
+& 'D:\Lya\bin\梨娅CSharp.exe' --path 'D:\pvz' <场景> --quit-after 120
+```
+
+配合 `Input.ParseInputEvent(...)` 往输入系统里塞事件，可以自动化整条输入链路。
