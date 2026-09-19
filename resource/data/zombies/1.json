@@ -8,23 +8,13 @@
     "2001": { "damage": 25, "interval": 1.0 },
     "3001": {},
     "5001": {
+      "atlas": "res://resource/data/zombies/1/atlas.png",
+      "cell": [140, 200],
+      "columns": 4,
       "fps": 8,
-      "walk": [
-        "res://resource/data/zombies/1/walk_1.png",
-        "res://resource/data/zombies/1/walk_2.png",
-        "res://resource/data/zombies/1/walk_3.png",
-        "res://resource/data/zombies/1/walk_4.png"
-      ],
-      "eat": [
-        "res://resource/data/zombies/1/eat_1.png",
-        "res://resource/data/zombies/1/eat_2.png",
-        "res://resource/data/zombies/1/eat_3.png"
-      ],
-      "die": [
-        "res://resource/data/zombies/1/die_1.png",
-        "res://resource/data/zombies/1/die_2.png",
-        "res://resource/data/zombies/1/die_3.png"
-      ]
+      "walk": 0,
+      "eat": 1,
+      "die": 2
     }
   }
 }

@@ -1,11 +1,11 @@
-using System.Collections.Generic;
 using Godot;
 
 /// <summary>
-/// 对战场景。它是**表现层**：自己不算任何玩法，只做两件事——
+/// 对战场景。它是**表现层**：自己不算任何玩法，只做三件事——
 ///
 /// 1. 开场：让 <see cref="GameManager"/> 开一局，然后把区域图、草坪、格子线摆到数据说的位置；
-/// 2. 每帧：让 GameManager 往前推进，然后把场上僵尸的状态画出来。
+/// 2. 每帧：让 GameManager 往前推进；
+/// 3. 画面：交给 <see cref="UnitDrawer"/>，它用一个 _Draw 把场上所有单位画完。
 ///
 /// 坐标约定：Region 节点的原点对齐区域图的左上角、缩放为 1，
 /// 所以它的局部坐标就是 region.json 里那些像素坐标，tile_origin / tile_size 可以直接用。
@@ -20,18 +20,13 @@ public partial class Battle : Node2D
     private const int DefaultLevelId = 1;
 
     private Camera2D _camera;
-    private Node2D _region;
     private Sprite2D _background;
     private Sprite2D _lawn;
     private TileGridOverlay _tileGrid;
 
-    /// <summary>逻辑里每一只僵尸对一份表现。逻辑那边没了就把它删掉。</summary>
-    private readonly Dictionary<Zombie, ZombieView> _views = new Dictionary<Zombie, ZombieView>();
-
     public override void _Ready()
     {
         _camera = GetNode<Camera2D>("Camera");
-        _region = GetNode<Node2D>("Region");
         _background = GetNode<Sprite2D>("Region/Background");
         _lawn = GetNode<Sprite2D>("Region/Lawn");
         _tileGrid = GetNode<TileGridOverlay>("Region/TileGrid");
@@ -49,8 +44,9 @@ public partial class Battle : Node2D
     }
 
     /// <summary>
-    /// 表现层每帧做的事：先让逻辑往前走，再把结果画出来。
+    /// 表现层每帧做的事：先让逻辑往前走，再重画。
     /// 顺序不能反——先画后算的话，画面永远慢一帧。
+    /// 单位本身由 UnitDrawer 自己每帧重画，这里只管推逻辑。
     /// </summary>
     public override void _Process(double delta)
     {
@@ -60,7 +56,6 @@ public partial class Battle : Node2D
         }
 
         GameManager.Tick((float)delta);
-        SyncZombieViews();
     }
 
     public override void _ExitTree()
@@ -99,46 +94,6 @@ public partial class Battle : Node2D
         }
 
         _tileGrid.Setup(tiles);
-    }
-
-    /// <summary>
-    /// 让场上的表现和逻辑对上：逻辑里新出现的僵尸补一个视图，
-    /// 逻辑里没了的把视图删掉。
-    /// </summary>
-    private void SyncZombieViews()
-    {
-        IReadOnlyList<Zombie> zombies = GameManager.Zombies;
-
-        var alive = new HashSet<Zombie>();
-        foreach (Zombie zombie in zombies)
-        {
-            alive.Add(zombie);
-
-            if (_views.ContainsKey(zombie))
-            {
-                continue;
-            }
-
-            var view = new ZombieView { Name = $"Zombie{zombie.Id}_{zombie.GetHashCode()}" };
-            _region.AddChild(view);
-            view.Setup(zombie);
-            _views[zombie] = view;
-        }
-
-        var gone = new List<Zombie>();
-        foreach (KeyValuePair<Zombie, ZombieView> pair in _views)
-        {
-            if (!alive.Contains(pair.Key))
-            {
-                gone.Add(pair.Key);
-            }
-        }
-
-        foreach (Zombie zombie in gone)
-        {
-            _views[zombie].QueueFree();
-            _views.Remove(zombie);
-        }
     }
 
     private static Texture2D LoadTexture(string path)

@@ -57,6 +57,23 @@ public abstract class BattleEntity
         return null;
     }
 
+    /// <summary>
+    /// 按组件的 C# 类型找组件，找不到返回 null。
+    /// 表现层用它找"这本动画收在哪儿"——它不认识具体是哪种动画，只认识动画组的基类。
+    /// </summary>
+    public T GetComponent<T>() where T : EntityComponent
+    {
+        foreach (EntityComponent component in _components)
+        {
+            if (component is T typed)
+            {
+                return typed;
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>身上有没有这种类型的组件。</summary>
     public bool HasComponent(string type)
     {
