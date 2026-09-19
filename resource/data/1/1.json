@@ -5,50 +5,50 @@
   "difficulty": "easy",
 
   "terrain_grid": [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1]
+	[1, 1, 1, 1, 1, 1, 1, 1, 1],
+	[1, 1, 1, 1, 1, 1, 1, 1, 1],
+	[1, 1, 1, 1, 1, 1, 1, 1, 1],
+	[1, 1, 1, 1, 1, 1, 1, 1, 1],
+	[1, 1, 1, 1, 1, 1, 1, 1, 1]
   ],
 
   "meta": {
-    "cleared": false,
-    "clear_time": 0.0,
-    "preview_image": "",
-    "reward_id": 0
+	"cleared": false,
+	"clear_time": 0.0,
+	"preview_image": "",
+	"reward_id": 0
   },
 
   "stages": [
-    {
-      "type": "story",
-      "dialogues": [
-        { "entry": 1, "left": true, "speaker_id": 1, "text": "多年的农场生活差点要了我的命", "audio": "" },
-        { "entry": 1, "left": true, "speaker_id": 1, "text": "希望你没有忘记怎么战斗", "audio": "" },
-        { "entry": 1, "left": true, "speaker_id": 1, "text": "我去休息了", "audio": "" }
-      ]
-    },
+	{
+	  "type": "story",
+	  "dialogues": [
+		{ "entry": 1, "left": true, "speaker_id": 1, "text": "多年的农场生活差点要了我的命", "audio": "" },
+		{ "entry": 2, "left": true, "speaker_id": 1, "text": "希望你没有忘记怎么战斗", "audio": "" },
+		{ "entry": 3, "left": true, "speaker_id": 1, "text": "我去休息了", "audio": "" }
+	  ]
+	},
 
-    {
-      "type": "start",
-      "difficulty": "easy",
-      "waves": [
-        { "index": 1, "zombies": [ { "type": 1, "count": 1 } ] },
-        { "index": 2, "zombies": [ { "type": 1, "count": 1 } ] },
-        { "index": 3, "zombies": [ { "type": 1, "count": 2 } ] }
-      ]
-    },
+	{
+	  "type": "start",
+	  "difficulty": "easy",
+	  "waves": [
+		{ "index": 1, "zombies": [ { "type": 1, "count": 1 } ] },
+		{ "index": 2, "zombies": [ { "type": 1, "count": 1 } ] },
+		{ "index": 3, "zombies": [ { "type": 1, "count": 2 } ] }
+	  ]
+	},
 
-    {
-      "type": "middle",
-      "stages": [
-        { "type": "wave", "index": 1, "base_value": 10, "zombie_types": [1] }
-      ]
-    },
+	{
+	  "type": "middle",
+	  "stages": [
+		{ "type": "wave", "index": 1, "base_value": 10, "zombie_types": [1] }
+	  ]
+	},
 
-    {
-      "type": "end",
-      "waves": []
-    }
+	{
+	  "type": "end",
+	  "waves": []
+	}
   ]
 }

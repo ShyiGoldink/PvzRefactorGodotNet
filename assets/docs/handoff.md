@@ -233,3 +233,49 @@ scripts/
 - **割草机**——现在僵尸走到草坪左边直接判负。
 - 向日葵的**瓜子**（每 30 秒在本格放一颗 1000 血的瓜子）还没做，
   需要在 `Tile` 上加第二个占位（防守位），僵尸啃的时候优先啃它。
+
+---
+
+## 9. 怎么导出 exe
+
+### 前提：要 .NET 10 SDK
+
+Godot 的 `DotNetFinder` 只认**和编辑器运行时同主版本**的 SDK：
+`Environment.Version` 是 10.0.9，所以它要 10.x 的 SDK，9.x 不行。
+（装了 .NET 10 的**运行时**没用，SDK 和运行时是两回事。）
+
+项目下已经放了一份便携的：`D:\pvz\.tools\dotnet10`（`.gitignore` 里忽略了）。
+运行导出前把它的路径放到 PATH 最前面就行：
+
+```powershell
+$env:PATH = 'D:\pvz\.tools\dotnet10;' + $env:PATH
+$env:DOTNET_ROOT = 'D:\pvz\.tools\dotnet10'
+$env:NUGET_PACKAGES = 'C:\Users\24807\.nuget\packages'
+```
+
+（`NUGET_PACKAGES` 是因为这台机器上 NuGet 会把全局包目录解析成相对路径。）
+
+### 导出
+
+```powershell
+New-Item -ItemType Directory -Force -Path 'D:\pvz\build' | Out-Null
+& 'D:\Lya\bin\梨娅CSharp.exe' --headless --path 'D:\pvz' `
+  --export-release 'Windows Desktop' 'D:\pvz\build\pvz.exe'
+```
+
+**`build` 目录必须先建好**，Godot 不会自己建，否则报"给定的导出路径不存在"。
+
+产物两个：
+
+| 文件 | 说明 |
+|---|---|
+| `build/pvz.exe` | 模板 + 内嵌的 pck（69.6 MB） |
+| `build/data_pvz_windows_x86_64/` | .NET 自包含运行时 + `pvz.dll`（187 个文件） |
+
+**两个都要带着**，少一个跑不起来。
+
+### 注意
+
+- 导出的 release 模板**禁用了命令行场景覆盖**，不能 `pvz.exe <场景路径>`，只能进主场景。
+- 换过主场景、或者改了 C# 代码，都要重新导一次。
+- 导出用的是自己编译引擎的模板，在 `%APPDATA%\Liya\export_templates\4.7.1.stable\`。
