@@ -1,0 +1,156 @@
+[gd_scene format=3 uid="uid://tncdjumlfwi8"]
+
+[ext_resource type="Script" uid="uid://b82xcl3q6xyh1" path="res://scenes/WorldMap/WorldMap.cs" id="1_map"]
+[ext_resource type="Script" uid="uid://bnlb4xjbx7824" path="res://scenes/WorldMap/RegionButton.cs" id="2_region_button"]
+
+[sub_resource type="StyleBoxFlat" id="FarmNormal"]
+bg_color = Color(0.42, 0.66, 0.32, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.2, 0.32, 0.15, 1)
+
+[sub_resource type="StyleBoxFlat" id="FarmPressed"]
+bg_color = Color(0.32, 0.5, 0.24, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.2, 0.32, 0.15, 1)
+
+[sub_resource type="StyleBoxFlat" id="FarmHover"]
+bg_color = Color(0.51, 0.74, 0.4, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.2, 0.32, 0.15, 1)
+
+[node name="WorldMap" type="Control" unique_id=828620630]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_map")
+
+[node name="Background" type="ColorRect" parent="." unique_id=645228529]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.07, 0.06, 0.05, 1)
+
+[node name="Center" type="CenterContainer" parent="." unique_id=561827682]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollRoot" type="Control" parent="Center" unique_id=1170436142]
+custom_minimum_size = Vector2(1780, 950)
+layout_mode = 2
+
+[node name="Viewport" type="Control" parent="Center/ScrollRoot" unique_id=351338665]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 1
+anchors_preset = 0
+offset_right = 1780.0
+offset_bottom = 950.0
+
+[node name="Content" type="Control" parent="Center/ScrollRoot/Viewport" unique_id=1188173970]
+layout_mode = 1
+anchors_preset = 0
+offset_right = 1780.0
+offset_bottom = 950.0
+
+[node name="Parchment" type="ColorRect" parent="Center/ScrollRoot/Viewport/Content" unique_id=51838625]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.85, 0.78, 0.6, 1)
+
+[node name="Title" type="Label" parent="Center/ScrollRoot/Viewport/Content" unique_id=2031146603]
+layout_mode = 1
+offset_left = 60.0
+offset_top = 40.0
+offset_right = 1720.0
+offset_bottom = 120.0
+theme_override_colors/font_color = Color(0.29, 0.19, 0.09, 1)
+theme_override_font_sizes/font_size = 52
+text = "选择区域"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RegionsLayer" type="Control" parent="Center/ScrollRoot/Viewport/Content" unique_id=1186188634]
+layout_mode = 1
+anchors_preset = 0
+offset_right = 1780.0
+offset_bottom = 950.0
+mouse_filter = 2
+
+[node name="Farm" type="Button" parent="Center/ScrollRoot/Viewport/Content/RegionsLayer" unique_id=1376678955]
+layout_mode = 1
+offset_left = 60.0
+offset_top = 140.0
+offset_right = 420.0
+offset_bottom = 380.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.99, 0.98, 0.94, 1)
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("FarmNormal")
+theme_override_styles/pressed = SubResource("FarmPressed")
+theme_override_styles/hover = SubResource("FarmHover")
+text = "农场"
+script = ExtResource("2_region_button")
+
+[node name="RollerLeft" type="ColorRect" parent="Center/ScrollRoot" unique_id=16816382]
+unique_name_in_owner = true
+layout_mode = 1
+offset_right = 32.0
+offset_bottom = 950.0
+color = Color(0.42, 0.28, 0.16, 1)
+
+[node name="RollerRight" type="ColorRect" parent="Center/ScrollRoot" unique_id=749769463]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 1748.0
+offset_right = 1780.0
+offset_bottom = 950.0
+color = Color(0.42, 0.28, 0.16, 1)
+
+[node name="Hint" type="Label" parent="Center/ScrollRoot" unique_id=1620724489]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 858.0
+offset_top = 455.0
+offset_right = 922.0
+offset_bottom = 625.0
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 36
+text = "点
+击
+展
+开"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ClickCatcher" type="Button" parent="Center/ScrollRoot" unique_id=718867754]
+unique_name_in_owner = true
+layout_mode = 1
+offset_right = 1780.0
+offset_bottom = 950.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true

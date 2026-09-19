@@ -1,0 +1,146 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/LevelSelect/LevelSelect.cs" id="1_select"]
+
+[node name="LevelSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_select")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.07, 0.06, 0.05, 1)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Book" type="Control" parent="Center"]
+custom_minimum_size = Vector2(1600, 920)
+layout_mode = 2
+
+[node name="Paper" type="ColorRect" parent="Center/Book"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.87, 0.82, 0.68, 1)
+
+[node name="Title" type="Label" parent="Center/Book"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 0
+offset_left = 0.0
+offset_top = 36.0
+offset_right = 1600.0
+offset_bottom = 108.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.29, 0.19, 0.09, 1)
+theme_override_font_sizes/font_size = 52
+text = "区域名"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PageRoot" type="Control" parent="Center/Book"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 0
+offset_left = 164.0
+offset_top = 140.0
+offset_right = 1436.0
+offset_bottom = 772.0
+
+[node name="Grid" type="GridContainer" parent="Center/Book/PageRoot"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 24
+theme_override_constants/v_separation = 24
+columns = 4
+
+[node name="Status" type="Label" parent="Center/Book"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 0
+offset_left = 0.0
+offset_top = 790.0
+offset_right = 1600.0
+offset_bottom = 830.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.4, 0.29, 0.15, 1)
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackButton" type="Button" parent="Center/Book"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 0
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 232.0
+offset_bottom = 96.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 28
+text = "← 返回"
+
+[node name="PrevButton" type="Button" parent="Center/Book"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 0
+offset_left = 200.0
+offset_top = 850.0
+offset_right = 420.0
+offset_bottom = 910.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 28
+text = "上一页"
+
+[node name="PageLabel" type="Label" parent="Center/Book"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 0
+offset_left = 690.0
+offset_top = 850.0
+offset_right = 910.0
+offset_bottom = 910.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.29, 0.19, 0.09, 1)
+theme_override_font_sizes/font_size = 30
+text = "第 1 / 1 页"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NextButton" type="Button" parent="Center/Book"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 0
+offset_left = 1180.0
+offset_top = 850.0
+offset_right = 1400.0
+offset_bottom = 910.0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 28
+text = "下一页"

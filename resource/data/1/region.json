@@ -1,0 +1,17 @@
+{
+  "id": 1,
+  "display_name": "农场",
+
+  "background": "res://resource/data/1/background.png",
+
+  "tile_origin": [600, 350],
+  "tile_size": [170, 172],
+
+  "spawn_margin": 300,
+
+  "terrain": {
+	"1": {
+	  "texture": "res://resource/data/terrain/grass.png"
+	}
+  }
+}
