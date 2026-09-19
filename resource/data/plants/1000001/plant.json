@@ -1,0 +1,18 @@
+{
+  "id": 1000001,
+  "display_name": "向日葵",
+  "population": "sunflower",
+  "cost": 50,
+  "cooldown": 7.5,
+  "hp": 300,
+  "seed": true,
+  "components": {
+    "3001": {},
+    "5005": {
+      "atlas": "res://resource/data/plants/1000001/atlas.png",
+      "cell": [160, 160], "columns": 24, "fps": 10,
+      "idle": 0, "idle_scared": 1, "die": 2, "sun": 3
+    },
+    "7001": { "interval": 24, "first_delay": 7, "amount": 25 }
+  }
+}

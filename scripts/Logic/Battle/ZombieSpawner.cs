@@ -4,8 +4,6 @@ using Godot;
 /// <summary>
 /// 出怪。
 ///
-/// 现在只做一件事：把僵尸放到**某条车道最右侧、地图外面**，让它自己走进画面。
-///
 /// - **谁出、出几只**：直接用关卡数据里 `start` 阶段那三次出怪，这里不另配一份。
 /// - **从多远的地方进**：读地图大小算出来——草坪右边缘再往右 region 配的 `spawn_margin`。
 ///   那个边距要大到让出场点在画面外，僵尸才会"走进来"而不是凭空出现。
@@ -21,13 +19,14 @@ public sealed class ZombieSpawner
     private const float PerZombieDelay = 0.6f;
 
     /// <summary>开场到第一只出场之间留一点时间，别一进来就出怪。</summary>
-    private const float FirstDelay = 1.5f;
+    private const float FirstDelay = 3f;
 
     /// <summary>场上还没清干净时，多久查一次。</summary>
     private const float WaitPoll = 0.25f;
 
     private readonly RegionConfig _region;
     private readonly TilesData _tiles;
+    private readonly BattleField _field;
     private readonly List<LevelWave> _waves;
     private readonly System.Random _random = new System.Random();
     private readonly Queue<int> _queue = new Queue<int>();
@@ -35,10 +34,11 @@ public sealed class ZombieSpawner
     private int _waveIndex = -1;
     private float _timer = FirstDelay;
 
-    public ZombieSpawner(RegionConfig region, TilesData tiles, LevelData level)
+    public ZombieSpawner(RegionConfig region, TilesData tiles, LevelData level, BattleField field)
     {
         _region = region;
         _tiles = tiles;
+        _field = field;
         _waves = level?.StartWaves ?? new List<LevelWave>();
     }
 
@@ -77,7 +77,7 @@ public sealed class ZombieSpawner
         }
 
         // 这一波已经放完了：等场上清干净再放下一波
-        if (GameManager.Zombies.Count > 0)
+        if (_field != null && _field.HasAnyZombie())
         {
             _timer = WaitPoll;
             return;
@@ -113,7 +113,7 @@ public sealed class ZombieSpawner
         Vector2 position = GetSpawnPosition(lane);
 
         ZombieData data = ZombieData.Load(zombieTypeId);
-        Zombie zombie = EntityAssembler.BuildZombie(data, position, _tiles);
+        Zombie zombie = EntityAssembler.BuildZombie(data, position, _tiles, lane);
         if (zombie == null)
         {
             GD.PushError($"[出怪] 装配不出编号 {zombieTypeId} 的僵尸。");

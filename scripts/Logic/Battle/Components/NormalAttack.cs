@@ -1,12 +1,10 @@
 using Godot;
 
 /// <summary>
-/// 普通攻击（2001）：僵尸啃植物。只在"啃"状态里干活。
+/// 普通啃食（2001）：僵尸啃植物。只在"啃"状态里干活。
 ///
 /// 前面那格没植物了就回去走路；有的话按间隔一口一口咬。
-///
-/// 注意：植物的血量还没做，所以咬下去只是把 take_damage 事件**发给那株植物**，
-/// 植物那边现在没人接。等做植物血量组件的时候，它会自己去订这个事件，这边一行都不用改。
+/// 咬的时候顺手给植物记一笔"我正在被啃"——**只给动画用**，跟伤害结算无关。
 /// </summary>
 public sealed class NormalAttack : EntityComponent
 {
@@ -52,7 +50,7 @@ public sealed class NormalAttack : EntityComponent
         Plant target = FindPlantAhead();
         if (target == null)
         {
-            // 嘴前面的植物没了（被铲了、被打掉了），回去走路
+            // 嘴前面的植物没了（被啃光了、被炸了），回去走路
             _zombie.ChangeState(ZombieState.Walk);
             return true;
         }
@@ -64,11 +62,12 @@ public sealed class NormalAttack : EntityComponent
         }
 
         _cooldown = _interval;
+        target.MarkBeingEaten();
         target.Events.Trigger(BattleEventName.take_damage, new DamageEvent(_zombie, _damage));
         return true;
     }
 
-    /// <summary>嘴巴底下那一格里的植物。</summary>
+    /// <summary>嘴巴底下那一格里的、还活着的植物。</summary>
     private Plant FindPlantAhead()
     {
         TilesData lawn = _zombie.Lawn;
@@ -77,6 +76,7 @@ public sealed class NormalAttack : EntityComponent
             return null;
         }
 
-        return lawn.Get(column, row)?.Plant;
+        Plant plant = lawn.Get(column, row)?.Plant;
+        return plant != null && plant.IsAlive ? plant : null;
     }
 }

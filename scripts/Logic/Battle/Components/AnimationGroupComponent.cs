@@ -69,6 +69,12 @@ public abstract class AnimationGroupComponent : EntityComponent
         return !string.IsNullOrEmpty(clipName) && _rows.TryGetValue(clipName, out int row) ? row : -1;
     }
 
+    /// <summary>这个动作配过没有。子类挑动画时用它做兜底：没有的动作别硬播。</summary>
+    public bool HasClip(string clipName)
+    {
+        return RowOf(clipName) >= 0;
+    }
+
     /// <summary>
     /// 动画表从配置里读进来：`atlas` / `cell` / `columns` / `fps` 是这本动画自己的参数，
     /// **其余每个键都是一个动作**，值是这个动作在图集上的行号（第一行是 0）。

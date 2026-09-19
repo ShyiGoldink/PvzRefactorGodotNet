@@ -1,0 +1,17 @@
+{
+  "id": 3,
+  "display_name": "旗帜僵尸",
+  "hp": 200,
+  "value": 1,
+  "flag": true,
+  "components": {
+    "1001": { "speed": 60 },
+    "2001": { "damage": 25, "interval": 1.0 },
+    "3001": { "arm_loss_at": 0.5 },
+    "5003": {
+      "atlas": "res://resource/data/zombies/3/atlas.png",
+      "cell": [160, 200], "columns": 24, "fps": 12,
+      "walk": 0, "eat": 1, "walk_armless": 2, "eat_armless": 3, "die": 4
+    }
+  }
+}

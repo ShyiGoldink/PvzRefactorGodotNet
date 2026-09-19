@@ -59,7 +59,7 @@ public sealed class NormalMove : EntityComponent
         return true;
     }
 
-    /// <summary>嘴巴底下那一格有没有植物。</summary>
+    /// <summary>嘴巴底下那一格有没有还能啃的植物。</summary>
     private bool HasPlantAhead()
     {
         TilesData lawn = _zombie.Lawn;
@@ -69,6 +69,6 @@ public sealed class NormalMove : EntityComponent
         }
 
         Tile tile = lawn.Get(column, row);
-        return tile != null && !tile.IsEmpty;
+        return tile != null && !tile.IsEmpty && tile.Plant.IsAlive;
     }
 }

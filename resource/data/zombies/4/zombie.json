@@ -1,0 +1,18 @@
+{
+  "id": 4,
+  "display_name": "铁桶僵尸",
+  "hp": 200,
+  "value": 3,
+  "flag": false,
+  "components": {
+    "1001": { "speed": 40 },
+    "2001": { "damage": 25, "interval": 1.0 },
+    "3001": { "arm_loss_at": 0.5 },
+    "3002": { "amount": 1100, "name": "铁桶" },
+    "5004": {
+      "atlas": "res://resource/data/zombies/4/atlas.png",
+      "cell": [160, 200], "columns": 24, "fps": 12,
+      "walk": 0, "eat": 1, "walk_armless": 2, "eat_armless": 3, "die": 4
+    }
+  }
+}

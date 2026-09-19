@@ -1,0 +1,18 @@
+{
+  "id": 1000003,
+  "display_name": "土豆地雷",
+  "population": "mine",
+  "cost": 25,
+  "cooldown": 30,
+  "hp": 300,
+  "seed": true,
+  "components": {
+    "3001": {},
+    "2003": { "arm_time": 15, "damage": 1800, "trigger_range": 90, "blast_range": 140 },
+    "5007": {
+      "atlas": "res://resource/data/plants/1000003/atlas.png",
+      "cell": [160, 160], "columns": 24, "fps": 10,
+      "idle": 0, "arm": 1, "explode": 2
+    }
+  }
+}

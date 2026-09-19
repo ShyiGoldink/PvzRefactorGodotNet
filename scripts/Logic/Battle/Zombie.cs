@@ -11,25 +11,34 @@ using Godot;
 /// </summary>
 public sealed class Zombie : BattleEntity
 {
+    /// <summary>倒下之后停留多久才真正消失（秒），留给表现层播完倒下那一段。</summary>
+    public const float DeathDuration = 1.5f;
+
     public Zombie(string id, string displayName)
         : base(id, displayName)
     {
     }
 
     /// <summary>
-    /// 位置（区域像素空间）。这是僵尸的**嘴**——往前走、啃东西都按这个点算，
-    /// 不是身体中心。这样"嘴伸进哪一格就开始啃哪一格"就是同一件事。
+    /// 位置（区域像素空间）。这是僵尸的**嘴**——往前走、啃东西都按这个点算。
+    /// 判定用的"身体中心"在 <see cref="BodyCenterX"/>。
     /// </summary>
     public Vector2 Position { get; set; }
+
+    /// <summary>身体的宽度（像素）。装配时按图集格子填，用来从嘴推出身体中心。</summary>
+    public float BodyWidth { get; set; } = 140f;
+
+    /// <summary>
+    /// 身体中心的横坐标。**攻击判定一律用它**，不用嘴——
+    /// 不然僵尸刚把嘴伸到植物边上就算"已经走过去了"，判定会偏早半个身位。
+    /// </summary>
+    public float BodyCenterX => Position.X + BodyWidth * 0.5f;
 
     /// <summary>站在哪片草坪上。出怪的时候由生成方塞进来。</summary>
     public TilesData Lawn { get; set; }
 
-    /// <summary>
-    /// 倒下之后停留多久才真正消失（秒）。
-    /// 留这段时间是给表现层把"倒下"那一段播完。等动画做好了，可以改成按动画长度算。
-    /// </summary>
-    public const float DeathDuration = 1.5f;
+    /// <summary>在哪一路。只在横向移动，所以定下来就不变了。</summary>
+    public int Lane { get; set; }
 
     /// <summary>当前状态。外面只能看，改只能走 ChangeState。</summary>
     public ZombieState State => _state;
@@ -37,43 +46,28 @@ public sealed class Zombie : BattleEntity
     private ZombieState _state = ZombieState.Spawn;
     private float _deathLeft;
 
-    /// <summary>血量上限。</summary>
-    public float MaxHp { get; private set; }
-
-    private float _hp;
-
     /// <summary>
-    /// 当前血量。改它就会：血量掉光自动进倒下状态，并且喊一声血量变了。
-    /// 想"只在受伤 / 回血的时候做点什么"的组件订 hp_changed，别每帧去比血量。
+    /// 胳膊还在不在。掉了之后动画组会切到"无手"的那几段。
+    /// 它不是状态，是一种损伤：掉了胳膊照样走路、照样啃。
     /// </summary>
-    public float Hp
+    public bool ArmLost { get; private set; }
+
+    /// <summary>血掉光 → 开始倒下。</summary>
+    protected override void OnHpDepleted()
     {
-        get => _hp;
-        set
-        {
-            float before = _hp;
-            _hp = value;
-
-            if (_hp <= 0f)
-            {
-                ChangeState(ZombieState.Die);
-            }
-
-            if (_hp != before)
-            {
-                Events.Trigger(BattleEventName.hp_changed, _hp - before);
-            }
-        }
+        ChangeState(ZombieState.Die);
     }
 
-    /// <summary>
-    /// 装配时用：设上限和初始血量。
-    /// 不走 Hp 的 setter——那时候还没人听得见 hp_changed，也没必要报一次"满血变化"。
-    /// </summary>
-    public void InitHp(float maxHp)
+    /// <summary>把胳膊打断。掉过一次就不会再触发第二次。</summary>
+    public void LoseArm()
     {
-        MaxHp = maxHp;
-        _hp = maxHp;
+        if (ArmLost || _state == ZombieState.Dead)
+        {
+            return;
+        }
+
+        ArmLost = true;
+        Events.Trigger(BattleEventName.arm_lost, null);
     }
 
     /// <summary>切换状态的唯一入口：改状态 + 发事件，所有切换都得走这里。</summary>
@@ -120,7 +114,7 @@ public sealed class Zombie : BattleEntity
 
     /// <summary>
     /// 走一遍受伤链。返回 true = 走完了（该扣的血已经扣了），
-    /// false = 被某个处理函数挡下来了（比如无敌、护盾吃满）。
+    /// false = 被某个处理函数挡下来了（比如防具还没碎）。
     /// </summary>
     public bool TakeDamage(DamageEvent hit)
     {

@@ -35,4 +35,27 @@ public static class BattleEventName
     /// **只有表现层会听**——逻辑层喊完就完事，自己不认识任何动画资源。
     /// </summary>
     public const string animation_changed = "ANIMATIONCHANGED";
+
+    /// <summary>
+    /// 僵尸的胳膊被打断了。载荷：null。
+    /// 动画组听它去切"无手"的那几段；别的系统想借这个机会做点什么也行。
+    /// </summary>
+    public const string arm_lost = "ARMLOST";
+
+    /// <summary>
+    /// 防具（路障 / 铁桶）被打碎。载荷：null。
+    /// 表现层可以借它播个碎裂效果，玩法上暂时没人听。
+    /// </summary>
+    public const string armor_broken = "ARMORBROKEN";
+
+    /// <summary>
+    /// 一株植物从场上没了（被啃掉、或者被打掉）。载荷：Plant。
+    /// 给"路上还有没有东西挡着"之类的判断用。
+    /// </summary>
+    public const string plant_removed = "PLANTREMOVED";
+
+    /// <summary>
+    /// 一只僵尸从场上没了。载荷：Zombie。
+    /// </summary>
+    public const string zombie_removed = "ZOMBIEREMOVED";
 }

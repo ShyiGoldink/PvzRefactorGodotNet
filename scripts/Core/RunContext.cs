@@ -20,6 +20,11 @@ public static class RunContext
     public static int SelectedLevelId { get; set; }
 
     /// <summary>
+    /// 选卡界面选好的种子（植物编号）。空的话对战场景自己按存档自动填满。
+    /// </summary>
+    public static System.Collections.Generic.List<int> SelectedSeeds { get; set; }
+
+    /// <summary>
     /// 羊皮卷是否已经展开过。
     /// 从选关界面回来时据此保持展开状态，不再重播展开动画。
     /// </summary>

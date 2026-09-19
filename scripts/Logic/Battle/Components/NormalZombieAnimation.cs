@@ -1,26 +1,25 @@
 using Godot;
 
 /// <summary>
-/// 普通僵尸的动画组（5001）：走路 / 啃 / 倒下 三段。
+/// 普通僵尸的动画组（5001）：走路 / 啃 / 断手之后的走路和啃 / 倒下。
 ///
-/// 它只把**状态翻译成动画名**，具体每段是什么资源、怎么播，由表现层拿这张表去解决。
-/// 换一套美术只要改配置里的地址，这个类不用动。
+/// "断手"不是状态，是一种损伤——掉了之后**动作没变，换的是行**。
+/// 这正是用动画组管这件事的意义：走路那一套逻辑不用知道手还在不在。
+///
+/// 每一段都按顺序找第一个配过的行，所以配置里少写一个动作也不会整只僵尸消失。
 /// </summary>
 public sealed class NormalZombieAnimation : AnimationGroupComponent
 {
-    /// <summary>走路那一段的名字。</summary>
     public const string ClipWalk = "walk";
-
-    /// <summary>啃东西那一段的名字。</summary>
     public const string ClipEat = "eat";
-
-    /// <summary>倒下那一段的名字。</summary>
+    public const string ClipWalkArmless = "walk_armless";
+    public const string ClipEatArmless = "eat_armless";
     public const string ClipDie = "die";
 
     public override int Id => 5001;
     public override string Type => "look.zombie.normal";
     public override string DisplayName => "普通僵尸动画";
-    public override string Description => "把僵尸状态翻译成 walk / eat / die 三段。";
+    public override string Description => "按状态 + 有没有胳膊挑图集上的一行。";
 
     private Zombie _zombie;
 
@@ -33,30 +32,54 @@ public sealed class NormalZombieAnimation : AnimationGroupComponent
             return;
         }
 
-        _zombie.Events.Register(BattleEventName.state_changed, new EventResponse(0, OnStateChanged));
+        _zombie.Events.Register(BattleEventName.state_changed, new EventResponse(0, OnVisualChanged));
+        _zombie.Events.Register(BattleEventName.arm_lost, new EventResponse(0, OnVisualChanged));
 
-        // 一上来就把当前该播的定下来，免得表现层来问的时候是空的
-        Play(ClipForState(_zombie.State));
+        PlayFirst(ClipsForCurrentState());
     }
 
-    private bool OnStateChanged(object arg)
+    private bool OnVisualChanged(object arg)
     {
-        Play(ClipForState(_zombie.State));
+        PlayFirst(ClipsForCurrentState());
         return true;
     }
 
-    private static string ClipForState(ZombieState state)
+    private string[] ClipsForCurrentState()
     {
-        switch (state)
+        switch (_zombie.State)
         {
             case ZombieState.Eat:
-                return ClipEat;
+                return _zombie.ArmLost
+                    ? new[] { ClipEatArmless, ClipEat, ClipWalkArmless, ClipWalk }
+                    : new[] { ClipEat, ClipWalk };
+
             case ZombieState.Die:
             case ZombieState.Dead:
-                return ClipDie;
+                return new[] { ClipDie, ClipWalk };
+
             default:
                 // 登场和走路现在共用一段，等有登场动画了再拆开
-                return ClipWalk;
+                return _zombie.ArmLost
+                    ? new[] { ClipWalkArmless, ClipWalk }
+                    : new[] { ClipWalk };
+        }
+    }
+
+    /// <summary>按顺序找第一个配过的动作切过去。</summary>
+    private void PlayFirst(string[] candidates)
+    {
+        foreach (string name in candidates)
+        {
+            if (HasClip(name))
+            {
+                Play(name);
+                return;
+            }
+        }
+
+        if (candidates.Length > 0)
+        {
+            Play(candidates[0]);
         }
     }
 }

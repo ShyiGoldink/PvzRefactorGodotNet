@@ -1,0 +1,17 @@
+{
+  "id": 1000004,
+  "display_name": "坚果",
+  "population": "nut",
+  "cost": 50,
+  "cooldown": 30,
+  "hp": 4000,
+  "seed": true,
+  "components": {
+    "3001": {},
+    "5008": {
+      "atlas": "res://resource/data/plants/1000004/atlas.png",
+      "cell": [160, 160], "columns": 24, "fps": 8,
+      "full": 0, "half": 1, "low": 2, "die": 3
+    }
+  }
+}

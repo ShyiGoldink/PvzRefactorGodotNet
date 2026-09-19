@@ -3,8 +3,8 @@ using System.Collections.Generic;
 /// <summary>
 /// 场上会动的东西的公共基类：植物、僵尸都是它。
 ///
-/// 它提供所有实体都需要的那几样：id / 显示名 / 自己的事件中心 / 身上挂的组件 / 每帧推进。
-/// 具体是什么东西（站着的还是走着的、有没有血量、站在哪一格）交给子类。
+/// 它提供所有实体都需要的那几样：id / 显示名 / 血量 / 自己的事件中心 / 身上挂的组件 / 每帧推进。
+/// 具体是什么东西（站着的还是走着的、站在哪一格、死了之后怎么样）交给子类。
 ///
 /// 逻辑层的东西，不是 Godot 节点：不放进场景树、没有任何动画，也能跑完一整局。
 /// 表现层只是读它的状态去画图。
@@ -25,10 +25,55 @@ public abstract class BattleEntity
     /// <summary>身上装着的组件，按装配顺序。</summary>
     public IReadOnlyList<EntityComponent> Components => _components;
 
+    /// <summary>血量上限。</summary>
+    public float MaxHp { get; private set; }
+
+    private float _hp;
+
+    /// <summary>
+    /// 当前血量。改它就会：掉光时走一次"血空了"的钩子，并且喊一声血量变了。
+    /// 想"只在受伤 / 回血的时候做点什么"的组件订 hp_changed，别每帧去比血量。
+    ///
+    /// 血量放在这里而不是各个子类，是因为"会掉血"是植物和僵尸共有的性质；
+    /// 掉光之后发生什么才各不一样——那是子类重写 OnHpDepleted 的事。
+    /// </summary>
+    public float Hp
+    {
+        get => _hp;
+        set
+        {
+            float before = _hp;
+            _hp = value;
+
+            if (_hp <= 0f)
+            {
+                OnHpDepleted();
+            }
+
+            if (_hp != before)
+            {
+                Events.Trigger(BattleEventName.hp_changed, _hp - before);
+            }
+        }
+    }
+
+    /// <summary>血掉光了没。</summary>
+    public bool IsHpDepleted => _hp <= 0f;
+
     protected BattleEntity(string id, string displayName)
     {
         Id = id;
         DisplayName = displayName;
+    }
+
+    /// <summary>
+    /// 装配时用：设上限和初始血量。
+    /// 不走 Hp 的 setter——那时候还没人听得见 hp_changed，也没必要报一次"满血变化"。
+    /// </summary>
+    public void InitHp(float maxHp)
+    {
+        MaxHp = maxHp;
+        _hp = maxHp;
     }
 
     /// <summary>
@@ -78,6 +123,14 @@ public abstract class BattleEntity
     public bool HasComponent(string type)
     {
         return GetComponent(type) != null;
+    }
+
+    /// <summary>
+    /// 血掉光的时候做什么。默认什么都不做，子类自己决定（僵尸是倒下，植物也是倒下）。
+    /// 可能被调多次（血量继续往下掉），所以实现里要自己挡重复。
+    /// </summary>
+    protected virtual void OnHpDepleted()
+    {
     }
 
     /// <summary>

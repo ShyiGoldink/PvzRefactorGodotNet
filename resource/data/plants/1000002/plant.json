@@ -1,0 +1,18 @@
+{
+  "id": 1000002,
+  "display_name": "豌豆射手",
+  "population": "pea",
+  "cost": 100,
+  "cooldown": 7.5,
+  "hp": 300,
+  "seed": true,
+  "components": {
+    "3001": {},
+    "2002": { "interval": 1.4, "damage": 20, "speed": 700, "bullet_clip": "pea" },
+    "5006": {
+      "atlas": "res://resource/data/plants/1000002/atlas.png",
+      "cell": [160, 160], "columns": 24, "fps": 12,
+      "idle": 0, "attack": 1, "die": 2, "pea": 3
+    }
+  }
+}
