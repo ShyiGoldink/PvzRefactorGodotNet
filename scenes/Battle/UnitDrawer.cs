@@ -158,8 +158,8 @@ public partial class UnitDrawer : Node2D
                 }
 
                 Vector2 center = tiles.GetTileCenter(column, row);
-                // 植物画在格子正中
-                DrawUnit(plant, plant.GetComponent<AnimationGroupComponent>(), center, Vector2.Zero, null);
+                // 植物画在格子正中：图的中心对齐格子中心
+                DrawUnit(plant, plant.GetComponent<AnimationGroupComponent>(), center, new Vector2(0.5f, 0.5f), null);
             }
         }
     }
@@ -169,7 +169,7 @@ public partial class UnitDrawer : Node2D
         foreach (Zombie zombie in GameManager.Zombies)
         {
             // 僵尸的位置是**嘴**（图的左边缘、竖直居中），所以图从那儿往右铺开
-            DrawUnit(zombie, zombie.GetComponent<AnimationGroupComponent>(), zombie.Position, new Vector2(0f, -0.5f), null);
+            DrawUnit(zombie, zombie.GetComponent<AnimationGroupComponent>(), zombie.Position, new Vector2(0f, 0.5f), null);
         }
     }
 
@@ -212,8 +212,11 @@ public partial class UnitDrawer : Node2D
     }
 
     /// <summary>
-    /// 画一只单位。anchor 是"图上的哪个点对齐 position"：
-    /// (0, -0.5) 表示左边缘竖直居中（僵尸的嘴），(0, 0) 表示正中（植物）。
+    /// 画一只单位。
+    ///
+    /// anchor 是**图上哪个点对齐 position**，用格子大小的比例表示：
+    /// (0.5, 0.5) = 正中；(0, 0.5) = 左边缘、竖直居中；(0, 0) = 左上角。
+    /// 目标矩形的左上角 = position − 格子大小 × anchor。
     /// </summary>
     private void DrawUnit(object key, AnimationGroupComponent animation, Vector2 position, Vector2 anchor, string clipOverride)
     {
