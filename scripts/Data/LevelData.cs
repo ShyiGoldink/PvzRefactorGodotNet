@@ -24,6 +24,12 @@ public sealed class LevelData
     public string Difficulty { get; private set; } = string.Empty;
 
     /// <summary>
+    /// 难度系数，中间阶段的预算要乘它。简单 ×1 / 普通 ×3 / 困难 ×5 / 噩梦 ×10。
+    /// 读不懂的难度按简单算。
+    /// </summary>
+    public float DifficultyScale { get; private set; } = 1f;
+
+    /// <summary>
     /// 格子类型表：[行, 列]。
     /// 第一维是行（y，从上往下），第二维是列（x，从左往右），跟 Godot 的坐标一致。
     /// 值是在本区域 region.json 的 terrain 里查图片用的地形编号。
@@ -35,6 +41,17 @@ public sealed class LevelData
     /// 中间阶段的小阶段以后会生成同样的结构，出怪器不用改。
     /// </summary>
     public List<LevelWave> StartWaves { get; private set; } = new List<LevelWave>();
+
+    /// <summary>
+    /// 中间阶段的小阶段，按顺序。每个小阶段以"一大波被清干净"为终点。
+    /// </summary>
+    public List<LevelSubStage> MiddleStages { get; private set; } = new List<LevelSubStage>();
+
+    /// <summary>
+    /// 一大波要不要必刷一只旗帜僵尸（不算进价值）。
+    /// 有些关卡不该刷，就在关卡数据里写 `"flag_zombie": false`。
+    /// </summary>
+    public bool FlagZombie { get; private set; } = true;
 
     /// <summary>某一关配置的路径。</summary>
     public static string GetPath(int regionId, int levelId)
@@ -60,9 +77,67 @@ public sealed class LevelData
             Difficulty = json["difficulty"].AsString(),
         };
 
+        data.DifficultyScale = data.Difficulty switch
+        {
+            "normal" => 3f,
+            "hard" => 5f,
+            "nightmare" => 10f,
+            _ => 1f,
+        };
+
         data.TerrainGrid = ReadTerrainGrid(json["terrain_grid"], path);
         data.StartWaves = ReadStartWaves(json["stages"], path);
+        data.MiddleStages = ReadMiddleStages(json["stages"], path);
+        data.FlagZombie = json["flag_zombie"].AsBool(true);
         return data;
+    }
+
+    /// <summary>只在 stages 里找 type == "middle" 那一段，把它的 wave 小阶段读出来。</summary>
+    private static List<LevelSubStage> ReadMiddleStages(JsonReader stages, string path)
+    {
+        var list = new List<LevelSubStage>();
+
+        for (int i = 0; i < stages.Count; i++)
+        {
+            JsonReader stage = stages[i];
+            if (stage["type"].AsString() != "middle")
+            {
+                continue;
+            }
+
+            JsonReader subStages = stage["stages"];
+            for (int s = 0; s < subStages.Count; s++)
+            {
+                JsonReader sub = subStages[s];
+
+                // 中间阶段里也能插剧情，那不是小阶段，跳过
+                if (sub["type"].AsString() != "wave")
+                {
+                    continue;
+                }
+
+                var item = new LevelSubStage
+                {
+                    Index = sub["index"].AsInt(s + 1),
+                    BaseValue = sub["base_value"].AsInt(),
+                };
+
+                JsonReader types = sub["zombie_types"];
+                for (int t = 0; t < types.Count; t++)
+                {
+                    item.ZombieTypes.Add(types[t].AsInt());
+                }
+
+                list.Add(item);
+            }
+        }
+
+        if (list.Count == 0)
+        {
+            GD.PushWarning($"[LevelData] 这一关没有中间小阶段，打完开始阶段就结束了：{path}");
+        }
+
+        return list;
     }
 
     /// <summary>只在 stages 里找 type == "start" 那一段，把它的 waves 读出来。</summary>

@@ -38,3 +38,21 @@ public sealed class LevelZombieEntry
     /// <summary>出几只。</summary>
     public int Count { get; set; }
 }
+
+/// <summary>
+/// 中间阶段里的一个小阶段。
+///
+/// 它**不写死出哪些僵尸**：只给一个基础价值和允许的种类，
+/// 具体出什么由 WavePlanner 按预算算出来——所以调难度只要改数字，不用重配一遍。
+/// </summary>
+public sealed class LevelSubStage
+{
+    /// <summary>第几个小阶段，从 1 开始。</summary>
+    public int Index { get; set; }
+
+    /// <summary>基础价值（还要乘难度系数才是总预算）。</summary>
+    public int BaseValue { get; set; }
+
+    /// <summary>这一个阶段允许出现的僵尸种类。</summary>
+    public List<int> ZombieTypes { get; } = new List<int>();
+}

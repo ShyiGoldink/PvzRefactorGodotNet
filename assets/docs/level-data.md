@@ -118,6 +118,7 @@ resource/data/<区域编号>/region.json
 | `display_name` | string | 显示名，占位用 |
 | `difficulty` | string | 本关难度，中间阶段的价值系数由它决定 |
 | `terrain_grid` | array | 本关 n×m 的格子类型表，见下 |
+| `flag_zombie` | bool | 一大波要不要必刷一只旗帜僵尸。不写默认 `true`，某些关卡不想刷就写 `false` |
 | `meta` | object | 关卡附属数据，见第 10 节 |
 | `stages` | array | 大阶段列表，见第 5 节 |
 
